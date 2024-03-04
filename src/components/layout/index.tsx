@@ -100,17 +100,19 @@ const Layout = ({ stacks, maybeStacks, imageSize }: Props) => {
           })}
         </div>
 
-        <div className={styles.maybeStacks} ref={ref}>
-          {maybeStacks.map((stack, index) => (
-            <Stack name={stack.name} stack={stack.cards} key={index} />
-          ))}
-        </div>
-
         {/* If masonry layout worked */}
         {/* {stacks.map((stack, index) => (
           <Stack name={`Stack ${index + 1}`} stack={stack} key={index} />
         ))} */}
       </div>
+
+      {maybeStacks.length > 0 && (
+        <div className={styles.maybeStacks}>
+          {maybeStacks.map((stack, index) => (
+            <Stack name={stack.name} stack={stack.cards} key={index} />
+          ))}
+        </div>
+      )}
     </div>
   );
 };

@@ -53,6 +53,7 @@ const App = () => {
           </div>
 
           <div>
+            <label>Image size</label>
             <button onClick={() => setImageSize(1)}>1</button>
             <button onClick={() => setImageSize(2)}>2</button>
             <button onClick={() => setImageSize(3)}>3</button>
