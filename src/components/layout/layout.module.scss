@@ -5,52 +5,112 @@
   container-type: inline-size;
 }
 
-.grid {
+.grid1 {
   width: 100%;
   max-width: 100%;
 
   display: grid;
   gap: 0.5rem;
 
-  grid-template-columns: repeat(10, 1fr);
+  grid-template-columns: repeat(8, 1fr);
 
   // If masonry layout actually workedN
   // grid-template-rows: masonry;
   // masonry-auto-flow: next;
 }
 
+.grid2 {
+  @extend .grid1;
+
+  grid-template-columns: repeat(12, 1fr);
+}
+
+.grid3 {
+  @extend .grid1;
+
+  grid-template-columns: repeat(15, 1fr);
+}
+
 @container (max-width: 1800px) {
-  .grid {
+  .grid1 {
     grid-template-columns: repeat(7, 1fr);
+  }
+
+  .grid2 {
+    grid-template-columns: repeat(10, 1fr);
+  }
+
+  .grid3 {
+    grid-template-columns: repeat(12, 1fr);
   }
 }
 
 @container (max-width: 1500px) {
-  .grid {
+  .grid1 {
     grid-template-columns: repeat(6, 1fr);
+  }
+
+  .grid2 {
+    grid-template-columns: repeat(8, 1fr);
+  }
+
+  .grid3 {
+    grid-template-columns: repeat(10, 1fr);
   }
 }
 
 @container (max-width: 1200px) {
-  .grid {
+  .grid1 {
     grid-template-columns: repeat(5, 1fr);
+  }
+
+  .grid2 {
+    grid-template-columns: repeat(6, 1fr);
+  }
+
+  .grid3 {
+    grid-template-columns: repeat(8, 1fr);
   }
 }
 
 @container (max-width: 1000px) {
-  .grid {
+  .grid1 {
     grid-template-columns: repeat(4, 1fr);
+  }
+
+  .grid2 {
+    grid-template-columns: repeat(5, 1fr);
+  }
+
+  .grid3 {
+    grid-template-columns: repeat(6, 1fr);
   }
 }
 
 @container (max-width: 800px) {
-  .grid {
+  .grid1 {
     grid-template-columns: repeat(3, 1fr);
+  }
+
+  .grid2 {
+    grid-template-columns: repeat(4, 1fr);
+  }
+
+  .grid3 {
+    grid-template-columns: repeat(5, 1fr);
   }
 }
 
 @container (max-width: 600px) {
-  .grid {
+  .grid1 {
     grid-template-columns: repeat(1, 1fr);
+  }
+
+  .grid2 {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .grid3 {
+    grid-template-columns: repeat(3, 1fr);
   }
 }

@@ -6,19 +6,61 @@ import styles from "./layout.module.scss";
 
 type Props = {
   stacks: number[][];
+  imageSize: 1 | 2 | 3;
 };
 
-const Layout = ({ stacks }: Props) => {
+// Must align with the CSS threshholds for this to work correctly
+const COLUMN_THRESHOLDS = {
+  1: {
+    max: 8,
+    1800: 7,
+    1500: 6,
+    1200: 5,
+    1000: 4,
+    800: 3,
+    600: 1,
+  },
+  2: {
+    max: 12,
+    1800: 10,
+    1500: 8,
+    1200: 6,
+    1000: 5,
+    800: 4,
+    600: 2,
+  },
+  3: {
+    max: 15,
+    1800: 12,
+    1500: 10,
+    1200: 8,
+    1000: 6,
+    800: 5,
+    600: 3,
+  },
+};
+
+function getColumnCount(imageSize: 1 | 2 | 3, width: number): number {
+  const thresholds = COLUMN_THRESHOLDS[imageSize];
+
+  let columnCount = thresholds.max;
+
+  if (width < 1800) columnCount = thresholds[1800];
+  if (width < 1500) columnCount = thresholds[1500];
+  if (width < 1200) columnCount = thresholds[1200];
+  if (width < 1000) columnCount = thresholds[1000];
+  if (width < 800) columnCount = thresholds[800];
+  if (width < 600) columnCount = thresholds[600];
+
+  return columnCount;
+}
+
+const Layout = ({ stacks, imageSize }: Props) => {
   const { ref, width = 1 } = useResizeObserver<HTMLDivElement>();
 
-  let columns = 10;
+  const columns = getColumnCount(imageSize, width);
 
-  if (width < 1800) columns = 7;
-  if (width < 1500) columns = 6;
-  if (width < 1200) columns = 5;
-  if (width < 1000) columns = 4;
-  if (width < 800) columns = 3;
-  if (width < 600) columns = 1;
+  const gridClassName = `grid${imageSize}`;
 
   const displayColumns: number[][][] = [];
 
@@ -32,7 +74,7 @@ const Layout = ({ stacks }: Props) => {
 
   return (
     <div className={styles.container}>
-      <div className={styles.grid} ref={ref}>
+      <div className={styles[gridClassName]} ref={ref}>
         {displayColumns.map((column, columnNumber) => {
           return (
             <div key={`column-${columnNumber}`}>
