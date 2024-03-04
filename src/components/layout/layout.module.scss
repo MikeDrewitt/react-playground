@@ -2,7 +2,29 @@
   width: 100%;
   max-width: 100%;
 
+  display: flex;
+  position: relative;
+  gap: 1rem;
+}
+
+.gridContainer {
+  width: 100%;
+  max-width: 100%;
+
+  display: flex;
+  gap: 1rem;
+
   container-type: inline-size;
+}
+
+.controls {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+
+  top: 1rem;
+  position: sticky;
+  height: fit-content;
 }
 
 .grid1 {
@@ -22,6 +44,9 @@
 .grid2 {
   @extend .grid1;
 
+  width: unset;
+  max-width: unset;
+
   grid-template-columns: repeat(12, 1fr);
 }
 
@@ -29,6 +54,14 @@
   @extend .grid1;
 
   grid-template-columns: repeat(15, 1fr);
+}
+
+.maybeStacks {
+  @extend .grid1;
+
+  max-width: 200px;
+
+  grid-template-columns: repeat(1, 1fr) !important;
 }
 
 @container (max-width: 1800px) {

@@ -17,7 +17,7 @@
   grid-auto-rows: 2.5rem;
 
   width: 100%;
-  max-width: 350px;
+  // max-width: 350px;
 
   padding-bottom: 1rem;
 
@@ -37,4 +37,21 @@
       top: calc(($i - 1) * 2rem);
     }
   }
+}
+
+.emptyStack {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+
+  font-weight: bold;
+
+  width: 100%;
+
+  aspect-ratio: 5 / 7;
+
+  border-radius: 1rem;
+  background-color: slateblue;
+  border: 1px solid lightblue;
 }

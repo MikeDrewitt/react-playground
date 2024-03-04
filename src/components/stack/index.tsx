@@ -18,10 +18,15 @@ const Stack = ({ name, stack }: Props) => {
   return (
     <div className={styles.container}>
       <h3>{name}</h3>
-      <div className={styles.cards} style={{ gridTemplateRows }}>
+      <div
+        className={styles.cards}
+        style={{ gridTemplateRows: gridTemplateRows || "auto" }}
+      >
         {stack.map((_card, index) => (
           <Card key={index} />
         ))}
+
+        {!stack.length && <div className={styles.emptyStack}>Empty stack</div>}
       </div>
     </div>
   );

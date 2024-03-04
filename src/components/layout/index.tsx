@@ -5,7 +5,8 @@ import Stack from "src/components/stack";
 import styles from "./layout.module.scss";
 
 type Props = {
-  stacks: number[][];
+  stacks: { name: string; cards: number[] }[];
+  maybeStacks: { name: string; cards: number[] }[];
   imageSize: 1 | 2 | 3;
 };
 
@@ -55,14 +56,14 @@ function getColumnCount(imageSize: 1 | 2 | 3, width: number): number {
   return columnCount;
 }
 
-const Layout = ({ stacks, imageSize }: Props) => {
+const Layout = ({ stacks, maybeStacks, imageSize }: Props) => {
   const { ref, width = 1 } = useResizeObserver<HTMLDivElement>();
 
   const columns = getColumnCount(imageSize, width);
 
   const gridClassName = `grid${imageSize}`;
 
-  const displayColumns: number[][][] = [];
+  const displayColumns: { name: string; cards: number[] }[][] = [];
 
   for (let i = 0; i < stacks.length; i++) {
     const stack = stacks[i];
@@ -74,20 +75,36 @@ const Layout = ({ stacks, imageSize }: Props) => {
 
   return (
     <div className={styles.container}>
-      <div className={styles[gridClassName]} ref={ref}>
-        {displayColumns.map((column, columnNumber) => {
-          return (
-            <div key={`column-${columnNumber}`}>
-              {column.map((stack, placeInColumn) => (
-                <Stack
-                  name={`Stack ${columnNumber + 1 + placeInColumn * columns}`}
-                  stack={stack}
-                  key={columnNumber + 1 + placeInColumn * columns}
-                />
-              ))}
-            </div>
-          );
-        })}
+      <div className={styles.controls}>
+        <button>Action 1</button>
+        <button>Action 2</button>
+        <button>Action 3</button>
+        <button>Action 4</button>
+      </div>
+
+      {/* The container that's being used for the container query must match the resize observer width, otherwise you'll be measuring different widths and stuff gets weird */}
+      <div className={styles.gridContainer} ref={ref}>
+        <div className={styles[gridClassName]}>
+          {displayColumns.map((column, columnNumber) => {
+            return (
+              <div key={`column-${columnNumber}`}>
+                {column.map((stack, placeInColumn) => (
+                  <Stack
+                    name={stack.name}
+                    stack={stack.cards}
+                    key={columnNumber + 1 + placeInColumn * columns}
+                  />
+                ))}
+              </div>
+            );
+          })}
+        </div>
+
+        <div className={styles.maybeStacks} ref={ref}>
+          {maybeStacks.map((stack, index) => (
+            <Stack name={stack.name} stack={stack.cards} key={index} />
+          ))}
+        </div>
 
         {/* If masonry layout worked */}
         {/* {stacks.map((stack, index) => (
