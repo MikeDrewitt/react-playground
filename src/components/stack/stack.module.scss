@@ -1,0 +1,40 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+
+  h3 {
+    margin: 0;
+    width: 100%;
+  }
+}
+
+.cards {
+  display: grid;
+  grid-template-columns: 1fr;
+  justify-items: center;
+
+  grid-auto-rows: 2.5rem;
+
+  width: 100%;
+  max-width: 350px;
+
+  padding-bottom: 1rem;
+
+  & > img {
+    width: 100%;
+
+    transition: transform 0.3s ease-in-out;
+    transition-delay: 0.1s;
+
+    &:hover ~ img {
+      transform: translateY(calc(100% - 1.5rem));
+    }
+  }
+
+  @for $i from 1 to 1000 {
+    & > img:nth-child(#{$i}) {
+      top: calc(($i - 1) * 2rem);
+    }
+  }
+}
