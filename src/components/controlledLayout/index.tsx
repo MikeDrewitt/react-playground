@@ -1,4 +1,3 @@
-import { useEffect, useState } from "react";
 import { DragDropContext, Droppable, Draggable } from "@hello-pangea/dnd";
 
 import Stack, { UndraggableStack } from "src/components/stack";
@@ -12,7 +11,7 @@ type Props = {
   columns: number;
 };
 
-const STACK_WIDTH: Record<1 | 2 | 3, number> = {
+export const STACK_WIDTH: Record<1 | 2 | 3, number> = {
   1: 150,
   2: 225,
   3: 300,

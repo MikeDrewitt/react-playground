@@ -14,6 +14,8 @@ const App = () => {
   const [controlledStacks, setControlledStacks] = useState(false);
   const [columns, setColumns] = useState(15);
 
+  const [noMaxWidth, setNoMaxWidth] = useState(false);
+
   const [imageSize, setImageSize] = useState<1 | 2 | 3>(2);
 
   useEffect(() => {
@@ -53,6 +55,12 @@ const App = () => {
     ]);
   };
 
+  const totalCards = stacks.reduce((acc, stack) => acc + stack.cards.length, 0);
+  const totalMaybeCards = maybeStacks.reduce(
+    (acc, stack) => acc + stack.cards.length,
+    0
+  );
+
   return (
     <>
       <div className="root-container">
@@ -67,6 +75,9 @@ const App = () => {
               <button onClick={() => setControlledStacks(!controlledStacks)}>
                 {controlledStacks ? "Uncontrol stacks" : "Control stacks"}
               </button>
+              <label>
+                ({totalCards}, {totalMaybeCards})
+              </label>
             </div>
 
             <div>
@@ -75,12 +86,22 @@ const App = () => {
               <button onClick={() => setImageSize(2)}>2</button>
               <button onClick={() => setImageSize(3)}>3</button>
 
-              <label>Columns</label>
-              <input
-                type="number"
-                value={columns}
-                onChange={(e) => setColumns(parseInt(e.target.value, 10))}
-              />
+              {controlledStacks && (
+                <>
+                  <label>Columns</label>
+                  <input
+                    type="number"
+                    value={columns}
+                    onChange={(e) => setColumns(parseInt(e.target.value, 10))}
+                  />
+                </>
+              )}
+
+              {!controlledStacks && (
+                <button onClick={() => setNoMaxWidth(!noMaxWidth)}>
+                  Toggle margins
+                </button>
+              )}
             </div>
           </div>
         </div>
@@ -99,6 +120,7 @@ const App = () => {
             stacks={stacks}
             maybeStacks={maybeStacks}
             imageSize={imageSize}
+            noMaxWidth={noMaxWidth}
           />
         )}
       </div>
