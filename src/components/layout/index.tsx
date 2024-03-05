@@ -1,6 +1,7 @@
 import useResizeObserver from "use-resize-observer";
+import { DragDropContext, Droppable, Draggable } from "@hello-pangea/dnd";
 
-import Stack from "src/components/stack";
+import Stack, { UndraggableStack } from "src/components/stack";
 
 import styles from "./layout.module.scss";
 
@@ -56,6 +57,38 @@ function getColumnCount(imageSize: 1 | 2 | 3, width: number): number {
   return columnCount;
 }
 
+const reorder = (list: Array<any>, startIndex: number, endIndex: number) => {
+  const result = Array.from(list);
+  const [removed] = result.splice(startIndex, 1);
+
+  result.splice(endIndex, 0, removed);
+
+  return result;
+};
+
+/**
+ * Moves an item from one list to another list.
+ */
+const move = (
+  source: any,
+  destination: any,
+  droppableSource: any,
+  droppableDestination: any
+) => {
+  const sourceClone = Array.from(source);
+  const destClone = Array.from(destination);
+  const [removed] = sourceClone.splice(droppableSource.index, 1);
+
+  destClone.splice(droppableDestination.index, 0, removed);
+
+  const result: any = {};
+
+  result[droppableSource.droppableId] = sourceClone;
+  result[droppableDestination.droppableId] = destClone;
+
+  return result;
+};
+
 const Layout = ({ stacks, maybeStacks, imageSize }: Props) => {
   const { ref, width = 1 } = useResizeObserver<HTMLDivElement>();
 
@@ -73,6 +106,30 @@ const Layout = ({ stacks, maybeStacks, imageSize }: Props) => {
     else displayColumns[columnPlacement].push(stack);
   }
 
+  const handleDragEnd = (result: any) => {
+    const { source, destination } = result;
+
+    // dropped outside the list
+    if (!destination) return;
+
+    const sInd = +source.droppableId;
+    const dInd = +destination.droppableId;
+
+    // if (sInd === dInd) {
+    //   const items = reorder(state[sInd], source.index, destination.index);
+    //   const newState = [...state];
+    //   newState[sInd] = items;
+    //   setState(newState);
+    // } else {
+    //   const result = move(state[sInd], state[dInd], source, destination);
+    //   const newState = [...state];
+    //   newState[sInd] = result[sInd];
+    //   newState[dInd] = result[dInd];
+
+    //   setState(newState.filter((group) => group.length));
+    // }
+  };
+
   return (
     <div className={styles.container}>
       <div className={styles.controls}>
@@ -83,33 +140,57 @@ const Layout = ({ stacks, maybeStacks, imageSize }: Props) => {
       </div>
 
       {/* The container that's being used for the container query must match the resize observer width, otherwise you'll be measuring different widths and stuff gets weird */}
-      <div className={styles.gridContainer} ref={ref}>
-        <div className={styles[gridClassName]}>
-          {displayColumns.map((column, columnNumber) => {
-            return (
-              <div key={`column-${columnNumber}`}>
-                {column.map((stack, placeInColumn) => (
-                  <Stack
-                    name={stack.name}
-                    stack={stack.cards}
-                    key={columnNumber + 1 + placeInColumn * columns}
-                  />
-                ))}
-              </div>
-            );
-          })}
-        </div>
+      <DragDropContext onDragEnd={handleDragEnd}>
+        <div className={styles.gridContainer} ref={ref}>
+          <div className={styles[gridClassName]}>
+            {displayColumns.map((column, columnNumber) => (
+              <Droppable
+                key={`column-${columnNumber}`}
+                droppableId={`${columnNumber}`}
+              >
+                {(provided, _snapshot) => (
+                  <div ref={provided.innerRef} {...provided.droppableProps}>
+                    {column.map((stack, placeInColumn) => (
+                      <Draggable
+                        key={placeInColumn}
+                        draggableId={`column-${columnNumber}-index-${placeInColumn}`}
+                        index={placeInColumn}
+                      >
+                        {(provided, _snapshot) => (
+                          <Stack
+                            name={stack.name}
+                            stack={stack.cards}
+                            key={columnNumber + 1 + placeInColumn * columns}
+                            ref={provided.innerRef}
+                            draggableProps={provided.draggableProps}
+                            dragHandleProps={provided.dragHandleProps}
+                            style={provided.draggableProps.style}
+                          />
+                        )}
+                      </Draggable>
+                    ))}
+                    {provided.placeholder}
+                  </div>
+                )}
+              </Droppable>
+            ))}
+          </div>
 
-        {/* If masonry layout worked */}
-        {/* {stacks.map((stack, index) => (
+          {/* If masonry layout worked */}
+          {/* {stacks.map((stack, index) => (
           <Stack name={`Stack ${index + 1}`} stack={stack} key={index} />
         ))} */}
-      </div>
+        </div>
+      </DragDropContext>
 
       {maybeStacks.length > 0 && (
         <div className={styles.maybeStacks}>
           {maybeStacks.map((stack, index) => (
-            <Stack name={stack.name} stack={stack.cards} key={index} />
+            <UndraggableStack
+              name={stack.name}
+              stack={stack.cards}
+              key={index}
+            />
           ))}
         </div>
       )}

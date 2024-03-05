@@ -1,3 +1,6 @@
+import { forwardRef } from "react";
+import { DraggableProvided } from "@hello-pangea/dnd";
+
 import Card from "src/components/card";
 
 import styles from "./stack.module.scss";
@@ -5,30 +8,58 @@ import styles from "./stack.module.scss";
 type Props = {
   name: string;
   stack: number[];
+  style?: React.CSSProperties;
 };
 
-const Stack = ({ name, stack }: Props) => {
-  const gridTemplateRows = stack.reduce((acc, _value, index) => {
-    if (index !== stack.length - 1) acc += "2.5rem ";
-    else acc += "auto";
+const Stack = forwardRef(
+  (props: Props & Omit<DraggableProvided, "innerRef">, ref: any) => {
+    const gridTemplateRows = props.stack.reduce((acc, _value, index) => {
+      if (index !== props.stack.length - 1) acc += "2.5rem ";
+      else acc += "auto";
 
-    return acc;
-  }, "");
+      return acc;
+    }, "");
 
-  return (
-    <div className={styles.container}>
-      <h3>{name}</h3>
+    return (
       <div
-        className={styles.cards}
-        style={{ gridTemplateRows: gridTemplateRows || "auto" }}
+        className={styles.container}
+        {...props.draggableProps}
+        style={{
+          ...props.style,
+          left: "auto !important",
+          top: "auto !important",
+        }}
       >
-        {stack.map((_card, index) => (
-          <Card key={index} />
-        ))}
+        <h3 ref={ref} {...props.dragHandleProps}>
+          {props.name}
+        </h3>
+        <div
+          className={styles.cards}
+          style={{ gridTemplateRows: gridTemplateRows || "auto" }}
+        >
+          {props.stack.map((_card, index) => (
+            <Card key={index} />
+          ))}
 
-        {!stack.length && <div className={styles.emptyStack}>Empty stack</div>}
+          {!props.stack.length && (
+            <div className={styles.emptyStack}>Empty stack</div>
+          )}
+        </div>
       </div>
-    </div>
-  );
-};
+    );
+  }
+);
+
 export default Stack;
+
+export const UndraggableStack = (props: Props) => (
+  <Stack
+    {...props}
+    ref={undefined}
+    dragHandleProps={null}
+    draggableProps={{
+      "data-rfd-draggable-context-id": "unknown",
+      "data-rfd-draggable-id": "unknown",
+    }}
+  />
+);
