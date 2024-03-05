@@ -1,8 +1,9 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 import Layout from "src/components/layout";
 
 import "./App.css";
+import ControlledLayout from "./components/controlledLayout";
 
 type Stack = { name: string; cards: number[] };
 
@@ -10,7 +11,17 @@ const App = () => {
   const [stacks, setStacks] = useState(new Array<Stack>());
   const [maybeStacks, setMaybeStacks] = useState(new Array<Stack>());
 
+  const [controlledStacks, setControlledStacks] = useState(false);
+  const [columns, setColumns] = useState(15);
+
   const [imageSize, setImageSize] = useState<1 | 2 | 3>(2);
+
+  useEffect(() => {
+    if (controlledStacks) document.body.classList.add("sticky-scroll");
+    else document.body.classList.remove("sticky-scroll");
+
+    return () => document.body.classList.remove("sticky-scroll");
+  }, [controlledStacks]);
 
   const handleAddRandomStack = () => {
     const numOfCards = Math.floor(Math.random() * 40) || 1;
@@ -44,27 +55,52 @@ const App = () => {
 
   return (
     <>
-      <div style={{ padding: "1rem" }}>
-        <div className="primary-controls">
-          <div>
-            <button onClick={handleAddRandomStack}>Add stack</button>
-            <button onClick={handleAddEmptyStack}>Add empty stack</button>
-            <button onClick={handleAddRandomMaybeStack}>Add maybe stack</button>
-          </div>
+      <div className="root-container">
+        <div className="controls-container">
+          <div className="controls-content">
+            <div>
+              <button onClick={handleAddRandomStack}>Add stack</button>
+              <button onClick={handleAddEmptyStack}>Add empty stack</button>
+              <button onClick={handleAddRandomMaybeStack}>
+                Add maybe stack
+              </button>
+              <button onClick={() => setControlledStacks(!controlledStacks)}>
+                {controlledStacks ? "Uncontrol stacks" : "Control stacks"}
+              </button>
+            </div>
 
-          <div>
-            <label>Image size</label>
-            <button onClick={() => setImageSize(1)}>1</button>
-            <button onClick={() => setImageSize(2)}>2</button>
-            <button onClick={() => setImageSize(3)}>3</button>
+            <div>
+              <label>Image size</label>
+              <button onClick={() => setImageSize(1)}>1</button>
+              <button onClick={() => setImageSize(2)}>2</button>
+              <button onClick={() => setImageSize(3)}>3</button>
+
+              <label>Columns</label>
+              <input
+                type="number"
+                value={columns}
+                onChange={(e) => setColumns(parseInt(e.target.value, 10))}
+              />
+            </div>
           </div>
         </div>
 
-        <Layout
-          stacks={stacks}
-          maybeStacks={maybeStacks}
-          imageSize={imageSize}
-        />
+        {controlledStacks && (
+          <ControlledLayout
+            columns={columns}
+            stacks={stacks}
+            maybeStacks={maybeStacks}
+            imageSize={imageSize}
+          />
+        )}
+
+        {!controlledStacks && (
+          <Layout
+            stacks={stacks}
+            maybeStacks={maybeStacks}
+            imageSize={imageSize}
+          />
+        )}
       </div>
     </>
   );
