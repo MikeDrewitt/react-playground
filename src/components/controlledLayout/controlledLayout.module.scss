@@ -37,3 +37,17 @@
 
   grid-template-columns: repeat(1, 1fr) !important;
 }
+
+.column {
+  border-radius: 1rem;
+  transition: background-color 0.2s ease-in-out;
+}
+
+.emptyStack {
+  opacity: 0.5;
+  padding: 2rem 0;
+
+  display: flex;
+  justify-content: center;
+  font-weight: bold;
+}

@@ -3,7 +3,6 @@ import useResizeObserver from 'use-resize-observer'
 import { UndraggableStack } from 'src/components/stack'
 
 import styles from './layout.module.scss'
-import { STACK_WIDTH } from '../controlledLayout'
 
 type Props = {
   stacks: { name: string; cards: number[] }[]

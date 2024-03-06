@@ -1,65 +1,53 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState } from 'react'
 
-import Layout from "src/components/layout";
+import Layout from 'src/components/layout'
 
-import "./App.css";
-import ControlledLayout from "./components/controlledLayout";
+import './App.css'
+import ControlledLayout from './components/controlledLayout'
 
-type Stack = { name: string; cards: number[] };
+type Stack = { name: string; cards: number[] }
 
 const App = () => {
-  const [stacks, setStacks] = useState(new Array<Stack>());
-  const [maybeStacks, setMaybeStacks] = useState(new Array<Stack>());
+  const [stacks, setStacks] = useState(new Array<Stack>())
+  const [maybeStacks, setMaybeStacks] = useState(new Array<Stack>())
 
-  const [controlledStacks, setControlledStacks] = useState(false);
-  const [columns, setColumns] = useState(15);
+  const [controlledStacks, setControlledStacks] = useState(false)
+  const [columns, setColumns] = useState(4) // todo: make this responsive
 
-  const [noMaxWidth, setNoMaxWidth] = useState(false);
+  const [noMaxWidth, setNoMaxWidth] = useState(false)
 
-  const [imageSize, setImageSize] = useState<1 | 2 | 3>(2);
+  const [imageSize, setImageSize] = useState<1 | 2 | 3>(2)
 
   useEffect(() => {
-    if (controlledStacks) document.body.classList.add("sticky-scroll");
-    else document.body.classList.remove("sticky-scroll");
+    if (controlledStacks) document.body.classList.add('sticky-scroll')
+    else document.body.classList.remove('sticky-scroll')
 
-    return () => document.body.classList.remove("sticky-scroll");
-  }, [controlledStacks]);
+    return () => document.body.classList.remove('sticky-scroll')
+  }, [controlledStacks])
 
   const handleAddRandomStack = () => {
-    const numOfCards = Math.floor(Math.random() * 40) || 1;
-    const newStack = Array.from(Array(numOfCards).keys());
+    const numOfCards = Math.floor(Math.random() * 40) || 1
+    const newStack = Array.from(Array(numOfCards).keys())
 
-    setStacks([
-      ...stacks,
-      { name: `Stack ${stacks.length + 1}`, cards: newStack },
-    ]);
-  };
+    setStacks([...stacks, { name: `Stack ${stacks.length + 1}`, cards: newStack }])
+  }
 
   const handleAddRandomMaybeStack = () => {
-    const numOfCards = Math.floor(Math.random() * 40) || 1;
-    const newStack = Array.from(Array(numOfCards).keys());
+    const numOfCards = Math.floor(Math.random() * 40) || 1
+    const newStack = Array.from(Array(numOfCards).keys())
 
-    setMaybeStacks([
-      ...maybeStacks,
-      { name: `Maybe stack ${maybeStacks.length + 1}`, cards: newStack },
-    ]);
-  };
+    setMaybeStacks([...maybeStacks, { name: `Maybe stack ${maybeStacks.length + 1}`, cards: newStack }])
+  }
 
   const handleAddEmptyStack = () => {
-    const numOfCards = 0;
-    const newStack = Array.from(Array(numOfCards).keys());
+    const numOfCards = 0
+    const newStack = Array.from(Array(numOfCards).keys())
 
-    setStacks([
-      ...stacks,
-      { name: `Stack ${stacks.length + 1}`, cards: newStack },
-    ]);
-  };
+    setStacks([...stacks, { name: `Stack ${stacks.length + 1}`, cards: newStack }])
+  }
 
-  const totalCards = stacks.reduce((acc, stack) => acc + stack.cards.length, 0);
-  const totalMaybeCards = maybeStacks.reduce(
-    (acc, stack) => acc + stack.cards.length,
-    0
-  );
+  const totalCards = stacks.reduce((acc, stack) => acc + stack.cards.length, 0)
+  const totalMaybeCards = maybeStacks.reduce((acc, stack) => acc + stack.cards.length, 0)
 
   return (
     <>
@@ -69,11 +57,9 @@ const App = () => {
             <div>
               <button onClick={handleAddRandomStack}>Add stack</button>
               <button onClick={handleAddEmptyStack}>Add empty stack</button>
-              <button onClick={handleAddRandomMaybeStack}>
-                Add maybe stack
-              </button>
+              <button onClick={handleAddRandomMaybeStack}>Add maybe stack</button>
               <button onClick={() => setControlledStacks(!controlledStacks)}>
-                {controlledStacks ? "Uncontrol stacks" : "Control stacks"}
+                {controlledStacks ? 'Uncontrol stacks' : 'Control stacks'}
               </button>
               <label>
                 ({totalCards}, {totalMaybeCards})
@@ -89,43 +75,25 @@ const App = () => {
               {controlledStacks && (
                 <>
                   <label>Columns</label>
-                  <input
-                    type="number"
-                    value={columns}
-                    onChange={(e) => setColumns(parseInt(e.target.value, 10))}
-                  />
+                  <input type="number" value={columns} onChange={e => setColumns(parseInt(e.target.value, 10))} />
                 </>
               )}
 
-              {!controlledStacks && (
-                <button onClick={() => setNoMaxWidth(!noMaxWidth)}>
-                  Toggle margins
-                </button>
-              )}
+              {!controlledStacks && <button onClick={() => setNoMaxWidth(!noMaxWidth)}>Toggle margins</button>}
             </div>
           </div>
         </div>
 
         {controlledStacks && (
-          <ControlledLayout
-            columns={columns}
-            stacks={stacks}
-            maybeStacks={maybeStacks}
-            imageSize={imageSize}
-          />
+          <ControlledLayout columns={columns} stacks={stacks} maybeStacks={maybeStacks} imageSize={imageSize} />
         )}
 
         {!controlledStacks && (
-          <Layout
-            stacks={stacks}
-            maybeStacks={maybeStacks}
-            imageSize={imageSize}
-            noMaxWidth={noMaxWidth}
-          />
+          <Layout stacks={stacks} maybeStacks={maybeStacks} imageSize={imageSize} noMaxWidth={noMaxWidth} />
         )}
       </div>
     </>
-  );
-};
+  )
+}
 
-export default App;
+export default App
