@@ -44,7 +44,7 @@ const ControlledLayout = ({ stacks, maybeStacks, imageSize, noMaxWidth }: Props)
   }, [])
 
   useEffect(() => {
-    const stackMap: Record<string, Stack> = stacks.reduce((acc, stack) => ({ ...acc, [stack.name]: stack }), {})
+    const stackMap: Record<string, StackType> = stacks.reduce((acc, stack) => ({ ...acc, [stack.name]: stack }), {})
     const stackNames = stacks.map(stack => stack.name)
 
     const updatedDisplayColumns =
