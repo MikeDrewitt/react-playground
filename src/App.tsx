@@ -3,10 +3,11 @@ import { useState } from 'react'
 import Layout from 'src/components/layout'
 import ControlledLayout from 'src/components/controlledLayout'
 
-import './App.css'
+import { Stack } from 'src/types/reusedTypes'
+
 import { getRandomCardUid } from './helpers/cardGenerator'
 
-type Stack = { name: string; cards: string[] }
+import './App.css'
 
 const App = () => {
   const [stacks, setStacks] = useState(new Array<Stack>())
@@ -67,7 +68,7 @@ const App = () => {
               3
             </button>
 
-            <button onClick={() => setNoMaxWidth(!noMaxWidth)}>Toggle margins</button>
+            <button onClick={() => setNoMaxWidth(!noMaxWidth)}>{noMaxWidth ? 'Enable' : 'Disable'} margins</button>
           </div>
         </div>
         {controlledStacks && (

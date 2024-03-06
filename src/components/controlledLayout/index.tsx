@@ -1,15 +1,15 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { DragDropContext, Droppable, Draggable } from '@hello-pangea/dnd'
 
 import Stack, { UndraggableStack } from 'src/components/stack'
 
+import { Stack as StackType } from 'src/types/reusedTypes'
+
 import styles from './controlledLayout.module.scss'
 
-type Stack = { name: string; cards: string[] }
-
 type Props = {
-  stacks: Stack[]
-  maybeStacks: Stack[]
+  stacks: StackType[]
+  maybeStacks: StackType[]
   imageSize: 1 | 2 | 3
   noMaxWidth?: boolean
 }
@@ -21,9 +21,10 @@ export const STACK_WIDTH: Record<1 | 2 | 3, number> = {
 }
 
 const ControlledLayout = ({ stacks, maybeStacks, imageSize, noMaxWidth }: Props) => {
-  const [columns, setColumns] = useState(0)
+  const columnInput = useRef<HTMLInputElement>(null)
 
-  const [stackMap, setStackMap] = useState<Record<string, Stack>>({})
+  const [columns, setColumns] = useState(0)
+  const [stackMap, setStackMap] = useState<Record<string, StackType>>({})
   const [displayColumns, setDisplayColumns] = useState<string[][]>([])
 
   const stackSize = STACK_WIDTH[imageSize]
@@ -116,7 +117,13 @@ const ControlledLayout = ({ stacks, maybeStacks, imageSize, noMaxWidth }: Props)
     <>
       <div>
         <label>Number of columns</label>
-        <input type="number" value={columns} onChange={e => setColumns(parseInt(e.target.value))} />
+        <input
+          type="number"
+          value={columns}
+          ref={columnInput}
+          onFocus={() => columnInput.current?.select()}
+          onChange={e => setColumns(parseInt(e.target.value) || 1)}
+        />
       </div>
 
       <div className={styles.container} style={containerStyles}>
@@ -138,7 +145,7 @@ const ControlledLayout = ({ stacks, maybeStacks, imageSize, noMaxWidth }: Props)
                     className={styles.column}
                     style={{
                       backgroundColor: snapshot.isDraggingOver ? 'hotpink' : 'transparent',
-                      minWidth: stackSize,
+                      width: stackSize,
                     }}>
                     {column.map((stackId, placeInColumn) => (
                       <Draggable
@@ -174,6 +181,9 @@ const ControlledLayout = ({ stacks, maybeStacks, imageSize, noMaxWidth }: Props)
             ))}
           </div>
         </DragDropContext>
+
+        {/* Forces the grid columns to only be as large as the columns within */}
+        <div style={{ flex: 1 }} />
 
         {maybeStacks.length > 0 && (
           <div className={styles.maybeStacks}>

@@ -7,6 +7,10 @@
   gap: 1.5rem;
 
   max-width: 2150px;
+
+  @media (max-width: 600px) {
+    flex-wrap: wrap;
+  }
 }
 
 .controls {
@@ -17,6 +21,10 @@
   top: 1rem;
   position: sticky;
   height: fit-content;
+
+  button {
+    white-space: nowrap;
+  }
 
   @media (max-width: 600px) {
     display: none;
@@ -40,4 +48,13 @@
   max-width: 200px;
 
   grid-template-columns: repeat(1, 1fr) !important;
+}
+
+.emptyStack {
+  opacity: 0.3;
+  padding: 2rem 0;
+
+  display: flex;
+  justify-content: center;
+  font-weight: bold;
 }

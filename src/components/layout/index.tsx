@@ -4,31 +4,34 @@ import { UndraggableStack } from 'src/components/stack'
 
 import { getColumnCount } from 'src/helpers/getAutoColumnSizes'
 
+import { Stack } from 'src/types/reusedTypes'
+
 import styles from './layout.module.scss'
+import { STACK_WIDTH } from '../controlledLayout'
 
 type Props = {
-  stacks: { name: string; cards: string[] }[]
-  maybeStacks: { name: string; cards: string[] }[]
+  stacks: Stack[]
+  maybeStacks: Stack[]
   imageSize: 1 | 2 | 3
   noMaxWidth?: boolean
 }
 
 const Layout = ({ stacks, maybeStacks, imageSize, noMaxWidth = false }: Props) => {
   const { ref, width = 1 } = useResizeObserver<HTMLDivElement>()
+  const stackMaxWidth = STACK_WIDTH[imageSize]
 
   const columns = getColumnCount(imageSize, width)
   const gridStyles: React.CSSProperties = { gridTemplateColumns: `repeat(${columns}, 1fr)` }
 
   // Used to create the faux masonry layout
   // NOTE - this can be replaced with masonry when it goes mainline
-  const displayColumns: { name: string; cards: string[] }[][] = []
+  const displayColumns: Stack[][] = Array.from(Array(columns).keys()).map(() => [])
 
   for (let i = 0; i < stacks.length; i++) {
     const stack = stacks[i]
     const columnPlacement = i % columns
 
-    if (!displayColumns[columnPlacement]) displayColumns.push([stack])
-    else displayColumns[columnPlacement].push(stack)
+    displayColumns[columnPlacement].push(stack)
   }
 
   return (
@@ -51,12 +54,14 @@ const Layout = ({ stacks, maybeStacks, imageSize, noMaxWidth = false }: Props) =
                 key={columnNumber + 1 + placeInColumn * columns}
               />
             ))}
+
+            {!column.length && <div className={styles.emptyStack}>Empty stack</div>}
           </div>
         ))}
       </div>
 
       {maybeStacks.length > 0 && (
-        <div className={styles.maybeStacks}>
+        <div className={styles.maybeStacks} style={{ maxWidth: stackMaxWidth }}>
           {maybeStacks.map((stack, index) => (
             <UndraggableStack name={stack.name} stack={stack.cards} key={index} />
           ))}

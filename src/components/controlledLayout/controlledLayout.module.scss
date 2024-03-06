@@ -18,13 +18,17 @@
   position: sticky;
   height: fit-content;
 
+  button {
+    white-space: nowrap;
+  }
+
   @media (max-width: 600px) {
     display: none;
   }
 }
 
 .grid {
-  width: 100%;
+  // width: 100%;
   max-width: 100%;
 
   display: grid;
@@ -52,7 +56,7 @@
 }
 
 .emptyStack {
-  opacity: 0.5;
+  opacity: 0.3;
   padding: 2rem 0;
 
   display: flex;
