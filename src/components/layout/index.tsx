@@ -7,8 +7,8 @@ import { getColumnCount } from 'src/helpers/getAutoColumnSizes'
 import styles from './layout.module.scss'
 
 type Props = {
-  stacks: { name: string; cards: number[] }[]
-  maybeStacks: { name: string; cards: number[] }[]
+  stacks: { name: string; cards: string[] }[]
+  maybeStacks: { name: string; cards: string[] }[]
   imageSize: 1 | 2 | 3
   noMaxWidth?: boolean
 }
@@ -21,7 +21,7 @@ const Layout = ({ stacks, maybeStacks, imageSize, noMaxWidth = false }: Props) =
 
   // Used to create the faux masonry layout
   // NOTE - this can be replaced with masonry when it goes mainline
-  const displayColumns: { name: string; cards: number[] }[][] = []
+  const displayColumns: { name: string; cards: string[] }[][] = []
 
   for (let i = 0; i < stacks.length; i++) {
     const stack = stacks[i]
@@ -34,10 +34,10 @@ const Layout = ({ stacks, maybeStacks, imageSize, noMaxWidth = false }: Props) =
   return (
     <div className={styles.container} style={{ maxWidth: noMaxWidth ? 'unset' : undefined }}>
       <div className={styles.controls}>
-        <button>Action 1</button>
-        <button>Action 2</button>
-        <button>Action 3</button>
-        <button>Action 4</button>
+        <button disabled>Action 1</button>
+        <button disabled>Action 2</button>
+        <button disabled>Action 3</button>
+        <button disabled>Action 4</button>
       </div>
 
       {/* NOTE - if/when masonry goes mainline, we can switch to that exclusively */}

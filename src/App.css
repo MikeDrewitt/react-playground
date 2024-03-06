@@ -2,10 +2,6 @@
   width: 100%;
 }
 
-body.sticky-scroll #root {
-  width: fit-content;
-}
-
 .root-container {
   display: flex;
   flex-direction: column;
@@ -14,21 +10,7 @@ body.sticky-scroll #root {
   gap: 1rem;
 }
 
-.controls-container {
-  width: 100%;
-
-  position: sticky;
-  display: flex;
-  justify-content: center;
-
-  left: 0;
-}
-
-body.sticky-scroll .controls-container {
-  width: 100vw;
-}
-
-.controls-content {
+.primary-controls {
   display: flex;
   justify-content: space-between;
 

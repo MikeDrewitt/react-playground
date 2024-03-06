@@ -5,7 +5,7 @@ import Stack, { UndraggableStack } from 'src/components/stack'
 
 import styles from './controlledLayout.module.scss'
 
-type Stack = { name: string; cards: number[] }
+type Stack = { name: string; cards: string[] }
 
 type Props = {
   stacks: Stack[]
@@ -37,7 +37,9 @@ const ControlledLayout = ({ stacks, maybeStacks, imageSize, noMaxWidth }: Props)
   }
 
   useEffect(() => {
-    setColumns(Math.floor(window.innerWidth / stackSize)) // Note - this only runs when first dropping into this view
+    const width = window.innerWidth > 2150 ? 2150 : window.innerWidth
+
+    setColumns(Math.floor(width / stackSize) - 1 || 1) // Note - this only runs when first dropping into this view
   }, [])
 
   useEffect(() => {
@@ -119,10 +121,10 @@ const ControlledLayout = ({ stacks, maybeStacks, imageSize, noMaxWidth }: Props)
 
       <div className={styles.container} style={containerStyles}>
         <div className={styles.controls}>
-          <button>Action 1</button>
-          <button>Action 2</button>
-          <button>Action 3</button>
-          <button>Action 4</button>
+          <button disabled>Action 1</button>
+          <button disabled>Action 2</button>
+          <button disabled>Action 3</button>
+          <button disabled>Action 4</button>
         </div>
 
         <DragDropContext onDragEnd={handleDragEnd}>

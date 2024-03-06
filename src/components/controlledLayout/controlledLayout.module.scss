@@ -17,6 +17,10 @@
   top: 1rem;
   position: sticky;
   height: fit-content;
+
+  @media (max-width: 600px) {
+    display: none;
+  }
 }
 
 .grid {

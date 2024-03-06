@@ -4,8 +4,9 @@ import Layout from 'src/components/layout'
 import ControlledLayout from 'src/components/controlledLayout'
 
 import './App.css'
+import { getRandomCardUid } from './helpers/cardGenerator'
 
-type Stack = { name: string; cards: number[] }
+type Stack = { name: string; cards: string[] }
 
 const App = () => {
   const [stacks, setStacks] = useState(new Array<Stack>())
@@ -19,23 +20,20 @@ const App = () => {
 
   const handleAddRandomStack = () => {
     const numOfCards = Math.floor(Math.random() * 40) || 1
-    const newStack = Array.from(Array(numOfCards).keys())
+    const newStack = Array.from(Array(numOfCards).keys()).map(() => getRandomCardUid())
 
     setStacks([...stacks, { name: `Stack ${stacks.length + 1}`, cards: newStack }])
   }
 
   const handleAddRandomMaybeStack = () => {
     const numOfCards = Math.floor(Math.random() * 40) || 1
-    const newStack = Array.from(Array(numOfCards).keys())
+    const newStack = Array.from(Array(numOfCards).keys()).map(() => getRandomCardUid())
 
     setMaybeStacks([...maybeStacks, { name: `Maybe stack ${maybeStacks.length + 1}`, cards: newStack }])
   }
 
   const handleAddEmptyStack = () => {
-    const numOfCards = 0
-    const newStack = Array.from(Array(numOfCards).keys())
-
-    setStacks([...stacks, { name: `Stack ${stacks.length + 1}`, cards: newStack }])
+    setStacks([...stacks, { name: `Stack ${stacks.length + 1}`, cards: [] }])
   }
 
   const totalCards = stacks.reduce((acc, stack) => acc + stack.cards.length, 0)
@@ -44,33 +42,34 @@ const App = () => {
   return (
     <>
       <div className="root-container">
-        <div>
-          <button onClick={handleAddRandomStack}>Add stack</button>
-          <button onClick={handleAddEmptyStack}>Add empty stack</button>
-          <button onClick={handleAddRandomMaybeStack}>Add maybe stack</button>
-          <button onClick={() => setControlledStacks(!controlledStacks)}>
-            {controlledStacks ? 'Disable' : 'Enable'} manual stacks
-          </button>
-          <label>
-            ({totalCards}, {totalMaybeCards})
-          </label>
+        <div className="primary-controls">
+          <div>
+            <button onClick={handleAddRandomStack}>Add stack</button>
+            <button onClick={handleAddEmptyStack}>Add empty stack</button>
+            <button onClick={handleAddRandomMaybeStack}>Add maybe stack</button>
+            <button onClick={() => setControlledStacks(!controlledStacks)}>
+              {controlledStacks ? 'Disable' : 'Enable'} manual stacks
+            </button>
+            <label>
+              ({totalCards}, {totalMaybeCards})
+            </label>
+          </div>
+
+          <div>
+            <label>Image size</label>
+            <button style={{ backgroundColor: imageSize === 1 ? '#646cff' : 'unset' }} onClick={() => setImageSize(1)}>
+              1
+            </button>
+            <button style={{ backgroundColor: imageSize === 2 ? '#646cff' : 'unset' }} onClick={() => setImageSize(2)}>
+              2
+            </button>
+            <button style={{ backgroundColor: imageSize === 3 ? '#646cff' : 'unset' }} onClick={() => setImageSize(3)}>
+              3
+            </button>
+
+            <button onClick={() => setNoMaxWidth(!noMaxWidth)}>Toggle margins</button>
+          </div>
         </div>
-
-        <div>
-          <label>Image size</label>
-          <button style={{ backgroundColor: imageSize === 1 ? '#646cff' : 'unset' }} onClick={() => setImageSize(1)}>
-            1
-          </button>
-          <button style={{ backgroundColor: imageSize === 2 ? '#646cff' : 'unset' }} onClick={() => setImageSize(2)}>
-            2
-          </button>
-          <button style={{ backgroundColor: imageSize === 3 ? '#646cff' : 'unset' }} onClick={() => setImageSize(3)}>
-            3
-          </button>
-
-          <button onClick={() => setNoMaxWidth(!noMaxWidth)}>Toggle margins</button>
-        </div>
-
         {controlledStacks && (
           <ControlledLayout stacks={stacks} maybeStacks={maybeStacks} imageSize={imageSize} noMaxWidth={noMaxWidth} />
         )}
