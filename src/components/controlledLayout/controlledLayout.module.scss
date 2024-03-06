@@ -1,14 +1,12 @@
 .container {
-  width: 100vw;
-  min-width: 2150px;
+  width: 100%;
 
   display: flex;
   position: relative;
-  gap: 1rem;
+  justify-content: center;
+  gap: 1.5rem;
 
-  @media (max-width: 2150px) {
-    min-width: 100%;
-  }
+  max-width: 2150px;
 }
 
 .controls {
@@ -22,10 +20,16 @@
 }
 
 .grid {
+  width: 100%;
+  max-width: 100%;
+
   display: grid;
   gap: 0.5rem;
 
   grid-auto-flow: column;
+  overflow-x: auto;
+
+  padding-bottom: 500px;
 
   // If masonry layout actually workedN
   // grid-template-rows: masonry;

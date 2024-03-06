@@ -1,5 +1,5 @@
-import { DragDropContext, Droppable, Draggable } from '@hello-pangea/dnd'
 import { useEffect, useState } from 'react'
+import { DragDropContext, Droppable, Draggable } from '@hello-pangea/dnd'
 
 import Stack, { UndraggableStack } from 'src/components/stack'
 
@@ -11,7 +11,7 @@ type Props = {
   stacks: Stack[]
   maybeStacks: Stack[]
   imageSize: 1 | 2 | 3
-  columns: number
+  noMaxWidth?: boolean
 }
 
 export const STACK_WIDTH: Record<1 | 2 | 3, number> = {
@@ -20,21 +20,25 @@ export const STACK_WIDTH: Record<1 | 2 | 3, number> = {
   3: 300,
 }
 
-const ControlledLayout = ({ stacks, maybeStacks, imageSize, columns }: Props) => {
+const ControlledLayout = ({ stacks, maybeStacks, imageSize, noMaxWidth }: Props) => {
+  const [columns, setColumns] = useState(0)
+
   const [stackMap, setStackMap] = useState<Record<string, Stack>>({})
-  const [displayColumns, setDisplayColumns] = useState<string[][]>(Array.from({ length: columns }, () => []))
+  const [displayColumns, setDisplayColumns] = useState<string[][]>([])
 
-  const columnWidth = STACK_WIDTH[imageSize]
-
-  const pageWidth = columns * columnWidth
+  const stackSize = STACK_WIDTH[imageSize]
 
   const containerStyles: React.CSSProperties = {
-    justifyContent: pageWidth > window.innerWidth ? 'flex-start' : 'center',
+    maxWidth: noMaxWidth ? 'unset' : undefined,
   }
 
   const gridStyles: React.CSSProperties = {
     gridTemplateColumns: `repeat(${columns}, 1fr)`,
   }
+
+  useEffect(() => {
+    setColumns(Math.floor(window.innerWidth / stackSize)) // Note - this only runs when first dropping into this view
+  }, [])
 
   useEffect(() => {
     const stackMap: Record<string, Stack> = stacks.reduce((acc, stack) => ({ ...acc, [stack.name]: stack }), {})
@@ -107,74 +111,77 @@ const ControlledLayout = ({ stacks, maybeStacks, imageSize, columns }: Props) =>
   }
 
   return (
-    <div className={styles.container} style={containerStyles}>
-      <div className={styles.controls}>
-        <button>Action 1</button>
-        <button>Action 2</button>
-        <button>Action 3</button>
-        <button>Action 4</button>
+    <>
+      <div>
+        <label>Number of columns</label>
+        <input type="number" value={columns} onChange={e => setColumns(parseInt(e.target.value))} />
       </div>
 
-      <DragDropContext onDragEnd={handleDragEnd}>
-        <div className={styles.grid} style={gridStyles}>
-          {displayColumns.map((column, columnNumber) => (
-            <Droppable key={`column-${columnNumber}`} droppableId={`${columnNumber}`}>
-              {(provided, snapshot) => (
-                <div
-                  {...provided.droppableProps}
-                  ref={provided.innerRef}
-                  className={styles.column}
-                  style={{
-                    backgroundColor: snapshot.isDraggingOver ? 'hotpink' : 'transparent',
-                  }}>
-                  {column.map((stackId, placeInColumn) => (
-                    <Draggable
-                      key={placeInColumn}
-                      draggableId={`column-${columnNumber}-index-${placeInColumn}`}
-                      index={placeInColumn}>
-                      {(provided, _snapshot) => {
-                        const stack = stackMap[stackId]
-
-                        if (!stack) return null
-
-                        return (
-                          <Stack
-                            name={stack.name}
-                            stack={stack.cards}
-                            key={columnNumber + 1 + placeInColumn * columns}
-                            ref={provided.innerRef}
-                            draggableProps={provided.draggableProps}
-                            dragHandleProps={provided.dragHandleProps}
-                            style={{
-                              ...provided.draggableProps.style,
-                              width: columnWidth,
-                            }}
-                          />
-                        )
-                      }}
-                    </Draggable>
-                  ))}
-                  {!column.length && (
-                    <div className={styles.emptyStack} style={{ width: columnWidth }}>
-                      Empty stack
-                    </div>
-                  )}
-                  {provided.placeholder}
-                </div>
-              )}
-            </Droppable>
-          ))}
+      <div className={styles.container} style={containerStyles}>
+        <div className={styles.controls}>
+          <button>Action 1</button>
+          <button>Action 2</button>
+          <button>Action 3</button>
+          <button>Action 4</button>
         </div>
-      </DragDropContext>
 
-      {maybeStacks.length > 0 && (
-        <div className={styles.maybeStacks}>
-          {maybeStacks.map((stack, index) => (
-            <UndraggableStack name={stack.name} stack={stack.cards} key={index} style={{ width: columnWidth }} />
-          ))}
-        </div>
-      )}
-    </div>
+        <DragDropContext onDragEnd={handleDragEnd}>
+          <div className={styles.grid} style={gridStyles}>
+            {displayColumns.map((column, columnNumber) => (
+              <Droppable key={`column-${columnNumber}`} droppableId={`${columnNumber}`}>
+                {(provided, snapshot) => (
+                  <div
+                    {...provided.droppableProps}
+                    ref={provided.innerRef}
+                    className={styles.column}
+                    style={{
+                      backgroundColor: snapshot.isDraggingOver ? 'hotpink' : 'transparent',
+                      minWidth: stackSize,
+                    }}>
+                    {column.map((stackId, placeInColumn) => (
+                      <Draggable
+                        key={placeInColumn}
+                        draggableId={`column-${columnNumber}-index-${placeInColumn}`}
+                        index={placeInColumn}>
+                        {(provided, _snapshot) => {
+                          const stack = stackMap[stackId]
+
+                          if (!stack) return null
+
+                          return (
+                            <Stack
+                              name={stack.name}
+                              stack={stack.cards}
+                              key={columnNumber + 1 + placeInColumn * columns}
+                              ref={provided.innerRef}
+                              draggableProps={provided.draggableProps}
+                              dragHandleProps={provided.dragHandleProps}
+                              style={{
+                                ...provided.draggableProps.style,
+                              }}
+                            />
+                          )
+                        }}
+                      </Draggable>
+                    ))}
+                    {!column.length && <div className={styles.emptyStack}>Empty stack</div>}
+                    {provided.placeholder}
+                  </div>
+                )}
+              </Droppable>
+            ))}
+          </div>
+        </DragDropContext>
+
+        {maybeStacks.length > 0 && (
+          <div className={styles.maybeStacks}>
+            {maybeStacks.map((stack, index) => (
+              <UndraggableStack name={stack.name} stack={stack.cards} key={index} />
+            ))}
+          </div>
+        )}
+      </div>
+    </>
   )
 }
 
